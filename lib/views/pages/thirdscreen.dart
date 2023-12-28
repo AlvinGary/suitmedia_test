@@ -30,7 +30,22 @@ class _ThirdScreenState extends State<ThirdScreen> {
   @override
   void initState() {
     super.initState();
-    getUsers();
+    controller = ScrollController()..addListener(_loadMore);
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(_loadMore);
+    super.dispose();
+  }
+
+  _loadMore() {
+    if (controller.position.extentAfter < 300) {
+      setState(() {
+        page++;
+      });
+      getUsers();
+    }
   }
 
   @override
@@ -49,12 +64,9 @@ class _ThirdScreenState extends State<ThirdScreen> {
           });
           await getUsers();
         },
-        child: ListView.separated(
+        child: ListView.builder(
           // this is what you need
           itemCount: users.length + 1,
-          separatorBuilder: (BuildContext context, int index) {
-            return Divider(height: 2); // this is the separator widget
-          },
           itemBuilder: (BuildContext context, int index) {
             if (index == users.length) {
               return isLoading
@@ -63,18 +75,23 @@ class _ThirdScreenState extends State<ThirdScreen> {
             }
 
             final user = users[index];
-            return Card(
-              // this is the item widget
-              child: ListTile(
-                title: Text('${user['first_name']} ${user['last_name']}'),
-                subtitle: Text(user['email']),
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(user['avatar']),
+            return Padding(
+              // this is what you need
+              padding: EdgeInsets.all(2), // this is the padding value
+              child: Card(
+                // this is what you need
+                elevation: 5.0, // this is the elevation value
+                child: ListTile(
+                  title: Text('${user['first_name']} ${user['last_name']}'),
+                  subtitle: Text(user['email']),
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(user['avatar']),
+                  ),
+                  onTap: () {
+                    Navigator.pop(
+                        context, '${user['first_name']} ${user['last_name']}');
+                  },
                 ),
-                onTap: () {
-                  Navigator.pop(
-                      context, '${user['first_name']} ${user['last_name']}');
-                },
               ),
             );
           },
