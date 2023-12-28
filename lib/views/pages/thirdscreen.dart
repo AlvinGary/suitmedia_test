@@ -12,8 +12,6 @@ class _ThirdScreenState extends State<ThirdScreen> {
   int page = 1;
   bool isLoading = false;
 
-  ScrollController controller = new ScrollController();
-
   Future<void> getUsers() async {
     setState(() {
       isLoading = true;
@@ -32,22 +30,12 @@ class _ThirdScreenState extends State<ThirdScreen> {
   @override
   void initState() {
     super.initState();
-    controller = ScrollController()..addListener(_loadMore);
+    getUsers();
   }
 
   @override
   void dispose() {
-    controller.removeListener(_loadMore);
     super.dispose();
-  }
-
-  _loadMore() {
-    if (controller.position.extentAfter < 300) {
-      setState(() {
-        page++;
-      });
-      getUsers();
-    }
   }
 
   @override
