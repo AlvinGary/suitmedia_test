@@ -12,6 +12,8 @@ class _ThirdScreenState extends State<ThirdScreen> {
   int page = 1;
   bool isLoading = false;
 
+  ScrollController controller = new ScrollController();
+
   Future<void> getUsers() async {
     setState(() {
       isLoading = true;
